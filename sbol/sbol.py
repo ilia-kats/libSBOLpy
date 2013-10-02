@@ -144,7 +144,7 @@ class ExtendableSBOLObjectArray(SBOLObjectArray):
 
 class Document(object):
     'Wrapper around a libSBOLc Document'
-    
+
     def __init__(self):
         # create document
         self.ptr = libsbol.createDocument()
@@ -176,9 +176,12 @@ class Document(object):
         self._annotations = []
         self._components  = []
         self._collections = []
+    def __del__(self):
+        if self.ptr:
+            libsbol.deleteDocument(self.ptr)
 
     def __str__(self):
-        return capture_stdout(libsbol.printDocument, self.ptr)
+        return libsbol.writeDocumentToString(self.ptr)
 
     def read(self, filename):
         libsbol.readDocument(self.ptr, filename)
@@ -217,7 +220,7 @@ class Document(object):
 
 class DNASequence(object):
     'Wrapper around a libSBOLc DNASequence'
-    
+
     def __init__(self, doc, uri):
         # create the C object
         self.ptr = libsbol.createDNASequence(doc.ptr, uri)
@@ -253,7 +256,7 @@ class DNASequence(object):
 
 class SequenceAnnotation(object):
     'Wrapper around a libSBOLc SequenceAnnotation'
-    
+
     def __init__(self, doc, uri):
         # create the C object
         self.ptr = libsbol.createSequenceAnnotation(doc.ptr, uri)
